@@ -62,6 +62,15 @@ export default function Login() {
                 />
                 <button type="submit">Login</button>
             </form>
+            <div>
+                <p> Don't have an account ? </p>
+                <button 
+                    onClick={() => router.push('/register')}
+                    style={{ marginTop: '10px'}}>
+                    Register
+                </button>
+            </div>
+
         </div>
     );
 }

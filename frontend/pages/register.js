@@ -19,33 +19,28 @@ export default function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('/api/users/register', {
+            const res = await fetch('http://localhost:5000/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-            const text = await res.text();
-            console.log('Raw Server Response:', text); // Debug log
-            let data;
-            try {
-                if (!text.trim().startsWith('{') && !text.trim().startsWith('[')) {
-                    throw new Error('Response is not valid JSON.');
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                const data = await res.json();
+                console.log(data);
+                if (res.ok) {
+                    alert(data.message);
+                    router.push('/login');
+                } else {
+                    alert(data.message);
                 }
-                data = JSON.parse(text);
-            } catch (error) {
-                console.error('Failed to parse JSON response:', error);
-                alert('There was an error processing the server response.');
-                return;
-            }
-
-            if (res.ok) {
-                alert(data.message);
-                router.push('/login');
             } else {
-                alert(data.message);
+                const text = await res.text();
+                console.error('Expected JSON, got:', text);
+                alert('There was an error processing the server response.');
             }
-        } catch (err) {
-            console.error('Fetch error:', err);
+        } catch (error) {
+            console.error('Error:', error);
             alert('Network error. Please try again.');
         }
     };
